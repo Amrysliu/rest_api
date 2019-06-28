@@ -49,13 +49,15 @@ class TestSuites:
                     self.job_template_failed_num = self.job_template_failed_num + 1
         refile.close()
 
-    def addTestSuite(self,csv_file, api_key, api_secret, flag_add_jobTemplate=0, flavor='', distri='', version='', group='', priority=50):
+    def addTestSuite(self,csv_file, api_key, api_secret, flag_add_jobTemplate=0, flavor='', distri='', version='', arch='', machine='', group='', priority=50):
         self.csv_file   = csv_file
         self.api_key    = api_key
         self.api_secret = api_secret
         self.flavor     = flavor
         self.distri     = distri
         self.version    = version
+        self.arch       = arch
+        self.machine    = machine
         self.group      = group
         self.priority   = priority 
         self.flag_add_jobTemplate = flag_add_jobTemplate
@@ -85,33 +87,11 @@ class TestSuites:
             with open(self.csv_file, 'r') as testsuite_csv:
                 content = csv.reader(testsuite_csv, delimiter=',')
                 for row in content:
-                    if row[0] == 'x86_64':
-                        continue
-                    name_x86_64     = row[0]
-                    setting_x86_64  = row[1]
-                    name_ppc64le    = row[2]
-                    setting_ppc64le = row[3]
-                    name_s390x      = row[4]
-                    setting_s390x   = row[5]
-                    name_aarch64    = row[6]
-                    setting_aarch64 = row[7]
+
+                    name    = row[0]
+                    setting = row[1]
                     
-                    if name_x86_64 != '':
-                        self.arch       = 'x86_64'
-                        self.machine    = '64bit' 
-                        self._addTestSuite(name_x86_64, setting_x86_64)
-                    if name_ppc64le != '':
-                        self.arch       = 'ppc64le'
-                        self.machine    = 'ppc64le'
-                        self._addTestSuite(name_ppc64le, setting_ppc64le)
-                    if name_s390x != '':
-                        self.arch       = 's390x'
-                        self.machine    = 's390x-kvm-sle12'
-                        self._addTestSuite(name_s390x, setting_s390x)
-                    if name_aarch64 != '':
-                        self.arch       = 'aarch64'
-                        self.machine    = 'aarch64'
-                        self._addTestSuite(name_aarch64, setting_aarch64)
+                    self._addTestSuite(name, setting)
 
                 rfile = open(self.result_file, 'a')
                 rfile.write(str(self.total_num) + " testsuites are operated \n")
