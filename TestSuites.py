@@ -135,3 +135,38 @@ class TestSuites:
             return data["error"] , ()
         return '', data["TestSuites"]
 
+    def delTestSuite(self,csv_file, api_key, api_secret):
+        #read csv file and add test suites
+        result_file = ''.join(random.sample(string.ascii_letters + string.digits, 8)) + ".txt"
+        refile = open(result_file, 'a')
+        error_message, testsuites = self.getAllTestSuite()
+        cvs_name_list = []
+        self.total_num      = 0
+        self.success_num    = 0
+        self.failed_num     = 0
+        try:
+            with open(csv_file, 'r') as testsuite_csv:
+                content = csv.reader(testsuite_csv, delimiter=',')
+                for row in content:
+                    name = row[0]
+                    cvs_name_list.append(name)
+
+            for x in testsuites:
+                if x["name"] in cvs_name_list:
+                    error_message = self.deleteTestSuite(api_key, api_secret, x["id"])
+                    self.total_num += 1
+                    if error_message != '':
+                        refile.write("[ERROR] del test suite " + x["name"] + " failed \n")
+                        refile.write(error_message + "\n")
+                        self.failed_num += 1
+                    else:
+                        refile.write("[SUCCESS] del test suite " + x["name"] + " successfully \n")
+                        self.success_num += 1
+
+            refile.write(str(self.total_num) + " testsuites are operated \n")
+            refile.write(str(self.success_num) + " testsuites success to del \n")
+            refile.write(str(self.failed_num) + " testsuites failed to del \n")
+        except OSError as err:
+            error_message = err
+
+        return error_message, result_file

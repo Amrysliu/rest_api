@@ -23,9 +23,10 @@ def printHelp():
         -r, arch
         -p, priority [optional]
         -T, add testsuites.
+        -D, del testsuites.
     Note:
         -f, -d, -v -g -r and -m must be used at same time. If users give -f, -d, -v, -g script will add testsuit to jobgroup.
-        -p, specify priority. if not priority is specified, using default value '50' 
+        -p, specify priority. if not priority is specified, using default value '50'
     """)
 
 
@@ -47,11 +48,11 @@ machineIds  = {}
 group_id    = ''
 
 flag_add_jobTemplate = 0
-    
+
 try:
     options, remainder = getopt.getopt(
-        sys.argv[1:], 
-        "Thc:a:k:s:f:d:v:g:p:r:m:",
+        sys.argv[1:],
+        "DThc:a:k:s:f:d:v:g:p:r:m:",
         [
             'help',
             'csv_file=',
@@ -96,6 +97,8 @@ for opt, arg in options:
         machine = arg
     elif opt in ('-T'):
         operate = 'addTestSuites'
+    elif opt in ('-D'):
+        operate = 'delTestSuites'
     elif opt in ('-h', '--help'):
         printHelp()
         sys.exit(0)
@@ -115,4 +118,12 @@ if operate == 'addTestSuites':
         print(error_message)
         sys.exit(5)
     print('See the result file: ' + result_file)
+elif operate =='delTestSuites':
+    testsuite = TestSuites(host)
+    error_message, result_file = testsuite.delTestSuite(csv_file, api_key, api_secret)
+    if error_message != '':
+        print(error_message)
+        sys.exit(5)
+    print('See the result file: ' + result_file)
+
     sys.exit(0)
